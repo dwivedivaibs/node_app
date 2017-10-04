@@ -15,13 +15,19 @@ var passportFacebook = require('../auth/facebook');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Cool How are you? ' });
+  if (!req.session.user) {
+    res.render('index');
+  }else{
+    res.render('profile', { title: 'Logged In' , user: req.session.user.name});
+  }
 });
 
-router.get('/profile', isLoggedIn, function(req, res) {
-  res.render('profile.hbs', {
-    user : req.user // get the user out of session and pass to template
-  });
+router.get('/profile', function(req, res) {
+  if (!req.session.user) {
+    res.render('index');
+  }else{
+    res.render('profile', { title: 'Logged In' , user: req.session.user.name});
+  }
 });
 
 router.get('/login', function(req, res, next) {
@@ -34,9 +40,10 @@ router.get('/auth/linkedin', passportLinkedIn.authenticate('linkedin'));
 router.get('/auth/linkedin/callback',
   passportLinkedIn.authenticate('linkedin', { failureRedirect: '/login' }),
   function(req, res) {
+    req.session.user = req.user;
     // Successful authentication
     // res.json(req.user);
-    res.render('profile', {items: req.user.name})
+    res.render('profile', {user: req.user.name})
   });
 
 // twitter routes 
@@ -46,10 +53,8 @@ router.get('/auth/twitter', passportTwitter.authenticate('twitter'));
 router.get('/auth/twitter/callback',
   passportTwitter.authenticate('twitter', { failureRedirect: '/login' }),
   function(req, res) {
-    // Successful authentication
-    // res.json(req.user);
-    // res.redirect('/');
-     res.render('profile', {items: req.user.name})
+    req.session.user = req.user;
+    res.render('profile', {user: req.user.name})
   });
 
 // facebook routes
@@ -59,23 +64,21 @@ router.get('/auth/facebook', passportFacebook.authenticate('facebook'));
 router.get('/auth/facebook/callback',
   passportFacebook.authenticate('facebook', { failureRedirect: '/login' }),
   function(req, res) {
-    // Successful authentication
-    // res.json(req.user);
-    // res.redirect('/');
-     res.render('profile', {items: req.user.name})
+    req.session.user = req.user;
+     res.render('profile', {user: req.user.name})
   });
 
 
-router.get('/logout', function(req, res, next) {
-  req.logout();
-  res.redirect('/');
+router.get('/user/logout', function(req, res, next) {
+  req.session.destroy();
+  res.redirect('/');  
 });
 
-function isLoggedIn(req, res, next) {
-  if (req.isAuthenticated())
-    return next();
-  res.redirect('/');
-}
+// function isLoggedIn(req, res, next) {
+//   if (req.isAuthenticated())
+//     return next();
+//   res.redirect('/');
+// }
 
 
 router.get('/get-data', function(req, res, next){
