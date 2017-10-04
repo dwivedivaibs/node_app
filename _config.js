@@ -12,7 +12,7 @@ var ids = {
   twitter: {
     consumerKey: 'EEvTaiajudSrBrDiD8mrqc6AJ',
     consumerSecret: '3G4JRstjNpuKNg2erNUGsLSEyKtkaWOEr0xPJ8MCtysvNM1icv',
-    callbackURL: "https://ancient-everglades-45540.herokuapp.com/twitter/callback"
+    callbackURL: "https://ancient-everglades-45540.herokuapp.com/auth/twitter/callback"
   }
 };
 
