@@ -8,7 +8,10 @@ var passportLinkedIn = require('../auth/linkdin');
 var passportTwitter = require('../auth/twitter');
 var passportFacebook = require('../auth/facebook');
 
-var url = 'mongodb://localhost:27017/test';
+// var url = 'mongodb://localhost:27017/test';
+
+ var url =  process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/:27017/test';
+
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
