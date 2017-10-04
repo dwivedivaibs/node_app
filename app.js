@@ -19,7 +19,9 @@ var app = express();
 app.engine('hbs', hbs({extname: 'hbs', defaultLayout: 'layout', layoutDir: __dirname +'views/layouts/'}))
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
-mongoose.connect('mongodb://localhost:27017/passport-social-auth');
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/HelloMongoose');
+
+
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));

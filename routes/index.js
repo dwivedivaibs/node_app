@@ -10,7 +10,7 @@ var passportFacebook = require('../auth/facebook');
 
 // var url = 'mongodb://localhost:27017/test';
 
- var url =  process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost/:27017/test';
+ var url =  process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'mongodb://localhost:27017/test';
 
 
 /* GET home page. */
