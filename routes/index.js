@@ -15,6 +15,7 @@ var passportFacebook = require('../auth/facebook');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
+  var $sess_user = req.session.user;
   if (!req.session.user) {
     res.render('index');
   }else{
@@ -23,6 +24,7 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/profile', function(req, res) {
+  var $sess_user = req.session.user;
   if (!req.session.user) {
     res.render('index');
   }else{
@@ -54,6 +56,7 @@ router.get('/auth/twitter/callback',
   passportTwitter.authenticate('twitter', { failureRedirect: '/login' }),
   function(req, res) {
     req.session.user = req.user;
+    var $sess_user = req.session.user;
     res.render('profile', {user: req.user.name})
   });
 
@@ -65,6 +68,7 @@ router.get('/auth/facebook/callback',
   passportFacebook.authenticate('facebook', { failureRedirect: '/login' }),
   function(req, res) {
     req.session.user = req.user;
+    var $sess_user = req.session.user;
      res.render('profile', {user: req.user.name})
   });
 
@@ -85,13 +89,13 @@ router.get('/get-data', function(req, res, next){
   mongo.connect(url, function(err, db){
     var resultArray = [];
     assert.equal(null, err);
-    var cursor = db.collection('user').find();
+    var cursor = db.collection('post').find();
     cursor.forEach(function(data, err){
       assert.equal(null, err);
       resultArray.push(data);
     }, function(){
       db.close();
-      res.render('index', {items: resultArray})
+      res.render('profile', {user: req.session.user.name, items: resultArray})
     })
   })
 })
@@ -105,7 +109,7 @@ router.post('/insert', function(req ,res, next){
 
   mongo.connect(url, function(err, db){
     assert.equal(null, err);
-    db.collection('user').insertOne(item, function(err, result){
+    db.collection('post').insertOne(item, function(err, result){
       assert.equal(null, err);
       db.close();
     })
@@ -124,7 +128,7 @@ router.post('/update', function(req ,res, next){
 
   mongo.connect(url, function(err, db){
     assert.equal(null, err);
-    db.collection('user').updateOne({"_id": objectId(id)}, {$set: item }, function(err, result){
+    db.collection('post').updateOne({"_id": objectId(id)}, {$set: item }, function(err, result){
       assert.equal(null, err);
       db.close();
     })
@@ -136,12 +140,25 @@ router.post('/delete', function(req ,res, next){
   var id = req.body.id;
   mongo.connect(url, function(err, db){
     assert.equal(null, err);
-    db.collection('user').deleteOne({"_id": objectId(id)}, function(err, result){
+    db.collection('post').deleteOne({"_id": objectId(id)}, function(err, result){
       assert.equal(null, err);
       db.close();
     })
   })
   res.redirect('/');
 })
+
+
+router.get('/show-data', function(req ,res, next){
+  var id = req._parsedUrl.query;
+  mongo.connect(url, function(err, db){
+    assert.equal(null, err);
+    db.collection('post').findOne({"_id": objectId(id)}, function(err, result) {
+      db.close();
+      res.render('show', {user: req.session.user.name, items: result})
+    });
+  })
+})
+
 
 module.exports = router;
