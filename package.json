@@ -25,7 +25,8 @@
   },
   "main": "_config.js",
   "devDependencies": {
-    "debug": "~2.6.3"
+    "debug": "~2.6.3",
+    "stylus": "*"
   },
   "author": "",
   "license": "ISC",
